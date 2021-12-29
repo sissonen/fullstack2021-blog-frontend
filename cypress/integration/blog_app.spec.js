@@ -54,6 +54,22 @@ describe('Blog app tests', function() {
       cy.contains('Blog "testtitle" added')
       cy.get('.blogTitle').contains('testtitle')
     })
+    
+    it('like a blog', function() {
+      cy.request({
+        method: 'POST',
+        url: 'http://localhost:3003/api/blogs/',
+        body: { title: 'test-title', author: 'test-author', url: 'test-url', likes: 1 },
+        headers: { 'Authorization': 'bearer ' + JSON.parse(localStorage.getItem('blogAppUser')).token }
+      })
+        .then(function() {
+          cy.visit('http://localhost:3000')
+          cy.get('.blogTitle').click()
+          cy.contains('Likes: 1')
+          cy.contains('+ Like').click()
+          cy.contains('Likes: 2')
+        })
+    })
   })
 
 })
