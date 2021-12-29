@@ -10,15 +10,14 @@ const Blog = ({ blog, updateBlog, removeBlog, user }) => {
     setShowDetails(!showDetails)
   }
 
-  const addLike = (event) => {
-    event.preventDefault()
+  const addLike = () => {
     updateBlog({
-      id: event.target.id.value,
-      title: event.target.title.value,
-      author: event.target.author.value,
-      url: event.target.url.value,
-      user: event.target.user.value,
-      likes: parseInt(event.target.likes.value) + 1
+      author: blog.author,
+      id: blog.id,
+      title: blog.title,
+      url: blog.url,
+      user: blog.user.id,
+      likes: parseInt(blog.likes) + 1
     })
     setLikesState(likesState + 1)
   }
@@ -58,22 +57,14 @@ const Blog = ({ blog, updateBlog, removeBlog, user }) => {
   }
 
   return (
-    <div style={blogStyle}>
-      <div onClick={toggleShowDetails} style={titleStyle}>
+    <div className="blogContainer" style={blogStyle}>
+      <div onClick={toggleShowDetails} className="blogTitle" style={titleStyle}>
         <span style={{ fontWeight: 'bold' }}>{blog.title}</span> by <span style={{ fontWeight: 'bold' }}>{blog.author}</span>
       </div>
-      <div style={detailsStyle}>
+      <div className="blogDetails" style={detailsStyle}>
         <div>URL: {blog.url}</div>
         <div>Likes: {likesState}
-          <form onSubmit={addLike}>
-            <input type="hidden" name="id" value={blog.id} />
-            <input type="hidden" name="title" value={blog.title} />
-            <input type="hidden" name="author" value={blog.author} />
-            <input type="hidden" name="url" value={blog.url} />
-            <input type="hidden" name="user" value={blog.user.id} />
-            <input type="hidden" name="likes" value={blog.likes} />
-            <button type="submit">+ Like</button>
-          </form>
+          <button onClick={addLike}>+ Like</button>
         </div>
         <div>Added by: {blog.user.name}</div>
         {deleteForm()}
