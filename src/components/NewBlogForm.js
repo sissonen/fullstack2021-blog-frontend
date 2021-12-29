@@ -30,7 +30,7 @@ const NewBlogForm = ({ addNewBlog }) => {
         <div>Author: <input type="text" value={author} name="Author" onChange={({ target }) => setAuthor(target.value)} /></div>
         <div>URL: <input type="text" value={url} name="URL" onChange={({ target }) => setUrl(target.value)} /></div>
         <div>Likes: <input type="text" value={likes} name="Likes" onChange={({ target }) => setLikes(target.value)} /></div>
-        <button type="submit">Create</button>
+        <button id="submit-new-blog" type="submit">Create</button>
       </form>
     </div>
   )
