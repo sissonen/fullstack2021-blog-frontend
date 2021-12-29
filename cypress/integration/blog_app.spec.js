@@ -1,7 +1,9 @@
 describe('Blog app tests', function() {
+  let user
+
   beforeEach(function() {
     cy.request('GET', 'http://localhost:3003/api/testing/reset')
-    const user = {
+    user = {
       name: 'Testi User',
       username: 'testiuser',
       password: 'secretpassword'
@@ -17,4 +19,21 @@ describe('Blog app tests', function() {
     cy.get('input[name=Password]')
     cy.contains('Login')
   })
+
+  describe('Login tests', function() {
+    it('correct login', function() {
+      cy.get('input[name=Username]').type(user.username)
+      cy.get('input[name=Password]').type(user.password)
+      cy.contains('Login').click()
+      cy.contains('Logged in as ' + user.name)
+    })
+
+    it('incorrect login', function() {
+      cy.get('input[name=Username]').type(user.username)
+      cy.get('input[name=Password]').type('wrongpass')
+      cy.contains('Login').click()
+      cy.contains('Failed to login')
+    })
+  })
+
 })
