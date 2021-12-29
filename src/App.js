@@ -31,6 +31,7 @@ const App = () => {
     if (userJSON) {
       const user = JSON.parse(userJSON)
       setUser(user)
+      blogService.setToken(user.token)
     }
   }, [])
 
