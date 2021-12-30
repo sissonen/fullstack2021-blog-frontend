@@ -41,7 +41,16 @@ describe('Blog app tests', function() {
         .then(({ body }) => {
           localStorage.setItem('blogAppUser', JSON.stringify(body))
           cy.visit('http://localhost:3000')
-        })
+          cy.request({
+            method: 'POST',
+            url: 'http://localhost:3003/api/blogs/',
+            body: { title: 'test-title', author: 'test-author', url: 'test-url', likes: 1 },
+            headers: { 'Authorization': 'bearer ' + body.token }
+          })
+            .then(function() {
+              cy.visit('http://localhost:3000')
+            })
+      })
     })
 
     it('add blog', function() {
@@ -56,19 +65,31 @@ describe('Blog app tests', function() {
     })
     
     it('like a blog', function() {
-      cy.request({
-        method: 'POST',
-        url: 'http://localhost:3003/api/blogs/',
-        body: { title: 'test-title', author: 'test-author', url: 'test-url', likes: 1 },
-        headers: { 'Authorization': 'bearer ' + JSON.parse(localStorage.getItem('blogAppUser')).token }
-      })
+      cy.get('.blogTitle').click()
+      cy.contains('Likes: 1')
+      cy.contains('+ Like').click()
+      cy.contains('Likes: 2')
+    })
+
+    it('remove a blog', function() {
+      cy.get('.blogTitle').click()
+      cy.contains('Remove blog').click()
+      cy.on('window:confirm', () => true)
+      cy.contains('removed succesfully')
+    })
+
+    it('another user cannot remove a blog', function() {
+      const testuser = { name: 'Test2', username: 'testuser2', password: 'testpass' }
+      cy.request('POST', 'http://localhost:3003/api/users', testuser)
         .then(function() {
-          cy.visit('http://localhost:3000')
-          cy.get('.blogTitle').click()
-          cy.contains('Likes: 1')
-          cy.contains('+ Like').click()
-          cy.contains('Likes: 2')
-        })
+          cy.request('POST', 'http://localhost:3003/api/login', { username: testuser.username, password: testuser.password })
+            .then(function({ body }) {
+              localStorage.setItem('blogAppUser', JSON.stringify(body))
+              cy.visit('http://localhost:3000')
+              cy.get('.blogTitle').click()
+              cy.contains('Remove blog').should('not.exist')
+            })
+      })
     })
   })
 
