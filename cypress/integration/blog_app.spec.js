@@ -44,7 +44,7 @@ describe('Blog app tests', function() {
           cy.request({
             method: 'POST',
             url: 'http://localhost:3003/api/blogs/',
-            body: { title: 'test-title', author: 'test-author', url: 'test-url', likes: 1 },
+            body: { title: 'test-title-1', author: 'test-author', url: 'test-url', likes: 1 },
             headers: { 'Authorization': 'bearer ' + body.token }
           })
             .then(function() {
@@ -90,6 +90,35 @@ describe('Blog app tests', function() {
               cy.contains('Remove blog').should('not.exist')
             })
       })
+    })
+
+    it.only('blogs sorted by likes', function() {
+      cy.request({
+        method: 'POST',
+        url: 'http://localhost:3003/api/blogs/',
+        body: { title: 'test-title-2', author: 'test-author-2', url: 'test-url-2', likes: 2 },
+        headers: { 'Authorization': 'bearer ' + JSON.parse(localStorage.getItem('blogAppUser')).token }
+      })
+        .then(function() {
+          cy.visit('http://localhost:3000')
+          cy.get('.blogContainer')
+            .then(function(blogList) {
+              // Check if blogs are in correct order
+              cy.wrap(blogList[0]).contains('test-title-2')
+              cy.wrap(blogList[1]).contains('test-title-1')
+              // Clike like-button on "title-1" twice
+              cy.wrap(blogList[1]).contains('test-title-1').click()
+              cy.wrap(blogList[1]).contains('+ Like').click()
+              cy.wait(1000)
+              cy.wrap(blogList[1]).contains('+ Like').click()
+              cy.wait(1000)
+              cy.get('.blogContainer')
+                .then(function(blogList2) {
+                  cy.wrap(blogList2[0]).contains('test-title-1')
+                  cy.wrap(blogList2[1]).contains('test-title-2')
+                })
+            })
+        })
     })
   })
 

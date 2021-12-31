@@ -10,8 +10,8 @@ const Blog = ({ blog, updateBlog, removeBlog, user }) => {
     setShowDetails(!showDetails)
   }
 
-  const addLike = () => {
-    updateBlog({
+  const addLike = async () => {
+    await updateBlog({
       author: blog.author,
       id: blog.id,
       title: blog.title,

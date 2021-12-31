@@ -77,8 +77,8 @@ const App = () => {
 
   const updateBlog = async (updatedBlog) => {
     try {
-      await blogService.putBlog(updatedBlog)
-      setBlogs(blogs.map(blog => blog.id === updatedBlog.id ? updatedBlog : blog))
+      const responseBlog = await blogService.putBlog(updatedBlog)
+      setBlogs(blogs.map(blog => blog.id === updatedBlog.id ? responseBlog : blog))
       setInfo({ msg: 'Blog ' + updatedBlog.title + ' updated succesfully.', level: 'info' })
       setTimeout(() => { setInfo(null) }, 3000)
     } catch (exception) {
